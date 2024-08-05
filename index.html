@@ -604,12 +604,13 @@
           </div>
 
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-            <form action="https://formsubmit.co/hermogene2001@gmail.com" method="POST">
+            <form id="my-form" action="https://formspree.io/f/xkgwgydj" method="POST">
         
                             <p class="alert alert-danger text-center" id="error" style="display:none ;">Please Fill All Fields
                             </p>
                             <p class="alert alert-success text-center" id="success" style="display:none ;">Thanks for your Message
                                 You will get Confimation shortly</p>
+              <p id="my-form-status"></p>
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="name">Your Name</label>
@@ -689,6 +690,38 @@
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/style-swirtcher.js"></script>
+  <script>
+  var form = document.getElementById("my-form");
+  
+  async function handleSubmit(event) {
+    event.preventDefault();
+    var status = document.getElementById("my-form-status");
+    var data = new FormData(event.target);
+    fetch(event.target.action, {
+      method: form.method,
+      body: data,
+      headers: {
+          'Accept': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        status.innerHTML = "Thanks for your submission!";
+        form.reset()
+      } else {
+        response.json().then(data => {
+          if (Object.hasOwn(data, 'errors')) {
+            status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
+          } else {
+            status.innerHTML = "Oops! There was a problem submitting your form"
+          }
+        })
+      }
+    }).catch(error => {
+      status.innerHTML = "Oops! There was a problem submitting your form"
+    });
+  }
+  form.addEventListener("submit", handleSubmit)
+</script>
 </body>
 
 </html>
